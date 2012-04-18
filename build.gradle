@@ -16,7 +16,7 @@ task clean << {
   delete('dist')
 }
 
-task buildAll(dependsOn: ':jfxgenproj:jar')  {
+task buildAll(dependsOn: ':demos:atomsmasher:fxjar') << {
   file('dist').mkdirs()
   jfxgenprojJar = project(':jfxgenproj').name 
   copy {
