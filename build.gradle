@@ -27,7 +27,7 @@ task buildAll(dependsOn: ':demos:atomsmasher:fxjar') << {
   atomSmasher = project(':demos:atomsmasher').name 
   copy {
     into "dist"
-    from "demo/atomsmasher/build/libs"
+    from "demos/atomsmasher/build/libs"
     include "$atomSmasher*.jar"
   }
 
