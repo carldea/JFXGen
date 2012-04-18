@@ -11,3 +11,26 @@ subprojects {
   }
 
 }
+
+task clean << {
+  delete('dist')
+}
+
+task buildAll(dependsOn: ':jfxgenproj:jar')  {
+  file('dist').mkdirs()
+  jfxgenprojJar = project(':jfxgenproj').name 
+  copy {
+    into "dist"
+    from "jfxgenproj/build/libs"
+    include "$jfxgenprojJar*.jar"
+  }
+  atomSmasher = project(':demos:atomsmasher').name 
+  copy {
+    into "dist"
+    from "demo/atomsmasher/build/libs"
+    include "$atomSmasher*.jar"
+  }
+
+}
+//buildAll.dependsOn = ':jfxgenproj:jar'
+
