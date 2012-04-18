@@ -1,0 +1,13 @@
+
+subprojects {
+  apply plugin: 'java'
+  group: 'carlfx'
+  version: '0.1'
+  repositories {
+    mavenCentral()
+  }
+  dependencies {
+    testCompile "junit:junit:4.8.2"
+  }
+
+}

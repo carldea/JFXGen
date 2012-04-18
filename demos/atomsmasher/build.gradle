@@ -1,0 +1,65 @@
+apply plugin: 'java'
+apply plugin:'application'
+
+group = 'carlfx'
+version = 0.1
+
+jdkVersion = 1.7
+antJavafxJar = 'build/classes/ant-javafx'
+jfxgenProj = project(':jfxgenproj')
+javafxHome = System.getenv('JAVAFX_HOME')
+
+sourceCompatibility = jdkVersion
+targetCompatibility = jdkVersion
+
+configurations {
+
+}
+
+repositories {
+  mavenCentral()
+  flatDir {
+    dirs "$javafxHome/tools/"
+  }
+
+}
+
+
+dependencies {
+  compile project(':jfxgenproj')
+  compile files("$javafxHome/rt/lib/jfxrt.jar") 
+  testCompile 'junit:junit:4.10'
+}
+
+
+mainClass = "carlfx.demos.atomsmasher.GameLoopPart2"
+
+task fxjar(dependsOn:'classes') << {
+    def fx = 'javafx:com.sun.javafx.tools.ant'
+    ant.sequential{
+        taskdef(resource:'com/sun/javafx/tools/ant/antlib.xml',
+                uri:fx, classpath:"$javafxHome/tools/ant-javafx.jar")
+
+        "$fx:application"(id:'app-info', name:project.name, mainClass:mainClass)
+        "$fx:resources"(id:'jfxgenLib') {
+	    fileset(includes: 'jfxgenproj-0.1.jar')
+	}
+
+	requiredLibs = configurations.runtime.findAll { File file -> (!file.name.equals('jfxrt.jar')) }
+        copy {
+          into "build/libs"
+	  from requiredLibs 
+	}
+
+	// So important that the resources fileset jar file must exist in the directory. (jfxgenproj-0.1.jar)
+        "$fx:jar"(destfile:"build/libs/${project.name}-${project.version}.jar"){
+            application(refid:'app-info')
+            fileset(dir:'build/classes/main')
+            resources (id:'xyz', description:'runtime classpath'){
+	      requiredLibs.each { File file -> 
+	        fileset(dir:'build/libs', includes: file.name) 
+	      }
+	    }
+	}
+    }
+}

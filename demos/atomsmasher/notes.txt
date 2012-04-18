@@ -1,0 +1,13 @@
+gradle clean build
+
+cd build
+
+run below
+
+javafxpackager -createjar -appclass carlfx.demos.atomsmasher.GameLoopPart2 -srcdir classes/main -outdir out -outfile atomsmasher-0.1.jar -v -manifestAttrs "JavaFX-Version=2.1,implementation-title=AtomSmasher,implementation-version=0.1,JavaFX-Application-Class=carlfx.demos.atomsmasher.GameLoopPart2,JavaFX-Class-Path=jfxgenproj-0.1.jar"
+
+
+copy jfxgenproj-0.1.jar colocated to atomsmasher-0.1.jar 
+
+double click atomsmasher-0.1.jar
+

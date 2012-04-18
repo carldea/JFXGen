@@ -1,0 +1,17 @@
+.gradle
+build
+_build
+.classpath
+.project
+.settings
+bin
+*.iml
+*.ipr
+*.iws
+out/
+.idea/
+/nbproject/private/
+/nbbuild/
+/dist/
+nbproject
+build.xml
