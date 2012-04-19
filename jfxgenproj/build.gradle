@@ -25,3 +25,4 @@ dependencies {
   compile files("${project.ext.javafxHome}/rt/lib/jfxrt.jar") 
   testCompile 'junit:junit:4.10'
 }
+defaultTasks 'clean', 'build'
