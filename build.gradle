@@ -18,19 +18,19 @@ task clean << {
 
 task buildAll(dependsOn: ':demos:atomsmasher:fxjar') << {
   file('dist').mkdirs()
-  jfxgenprojJar = project(':jfxgenproj').name 
+  ext.jfxgenprojJar = project(':jfxgenproj').name 
   copy {
     into "dist"
     from "jfxgenproj/build/libs"
-    include "$jfxgenprojJar*.jar"
+    include "${ext.jfxgenprojJar}*.jar"
   }
-  atomSmasher = project(':demos:atomsmasher').name 
+  ext.atomSmasher = project(':demos:atomsmasher').name 
   copy {
     into "dist"
     from "demos/atomsmasher/build/libs"
-    include "$atomSmasher*.jar"
+    include "${ext.atomSmasher}*.jar"
   }
 
 }
-//buildAll.dependsOn = ':jfxgenproj:jar'
+defaultTasks 'clean', 'buildAll'
 
