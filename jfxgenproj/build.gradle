@@ -1,19 +1,18 @@
 apply plugin: 'java'
 project.ext.group = 'carlfx'
-project.ext.version = '0.1'
+project.version = '0.1'
+project.ext.jdkVersion = 1.7
+project.ext.javafxHome = System.getenv('JAVAFX_HOME')
+
 group = 'carlfx'
 version = 0.1
-
-jdkVersion = 1.7
-javafxHome = System.getenv('JAVAFX_HOME')
-antJavafxJar = 'build/classes/ant-javafx'
 
 sourceCompatibility = jdkVersion
 targetCompatibility = jdkVersion
 
 jar {
   manifest {
-    attributes 'Implementation-Title': 'JavaFX 2 Game Engine', 'Implementation-Version': project.ext.version
+    attributes 'Implementation-Title': 'JavaFX 2 Game Engine', 'Implementation-Version': project.version
   }
 }
 
@@ -23,6 +22,6 @@ repositories {
 
 
 dependencies {
-  compile files("$javafxHome/rt/lib/jfxrt.jar") 
+  compile files("${project.ext.javafxHome}/rt/lib/jfxrt.jar") 
   testCompile 'junit:junit:4.10'
 }
