@@ -1,13 +1,12 @@
 apply plugin: 'java'
 apply plugin:'application'
 
-group = 'carlfx'
-version = 0.1
-
-jdkVersion = 1.7
-antJavafxJar = 'build/classes/ant-javafx'
-jfxgenProj = project(':jfxgenproj')
-javafxHome = System.getenv('JAVAFX_HOME')
+project.ext.group = 'carlfx'
+project.version = 0.1
+project.ext.jdkVersion = 1.7
+project.ext.antJavafxJar = 'build/classes/ant-javafx'
+project.ext.jfxgenProj = project(':jfxgenproj')
+project.ext.javafxHome = System.getenv('JAVAFX_HOME')
 
 sourceCompatibility = jdkVersion
 targetCompatibility = jdkVersion
@@ -19,7 +18,7 @@ configurations {
 repositories {
   mavenCentral()
   flatDir {
-    dirs "$javafxHome/tools/"
+    dirs "${project.ext.javafxHome}/tools/"
   }
 
 }
@@ -27,28 +26,25 @@ repositories {
 
 dependencies {
   compile project(':jfxgenproj')
-  compile files("$javafxHome/rt/lib/jfxrt.jar") 
+  compile files("${project.ext.javafxHome}/rt/lib/jfxrt.jar") 
   testCompile 'junit:junit:4.10'
 }
 
 
-mainClass = "carlfx.demos.atomsmasher.GameLoopPart2"
+project.ext.mainClass = "carlfx.demos.atomsmasher.GameLoopPart2"
 
-task fxjar(dependsOn:'classes') << {
+task fxjar(dependsOn:[':jfxgenproj:jar', 'classes']) << {
     def fx = 'javafx:com.sun.javafx.tools.ant'
     ant.sequential{
         taskdef(resource:'com/sun/javafx/tools/ant/antlib.xml',
-                uri:fx, classpath:"$javafxHome/tools/ant-javafx.jar")
+                uri:fx, classpath: "${project.ext.javafxHome}/tools/ant-javafx.jar")
 
-        "$fx:application"(id:'app-info', name:project.name, mainClass:mainClass)
-        "$fx:resources"(id:'jfxgenLib') {
-	    fileset(includes: 'jfxgenproj-0.1.jar')
-	}
+        "$fx:application"(id:'app-info', name:project.name, mainClass:project.ext.mainClass)
 
-	requiredLibs = configurations.runtime.findAll { File file -> (!file.name.equals('jfxrt.jar')) }
+	ext.requiredLibs = configurations.runtime.findAll { File file -> (!file.name.equals('jfxrt.jar')) }
         copy {
           into "build/libs"
-	  from requiredLibs 
+	  from ext.requiredLibs 
 	}
 
 	// So important that the resources fileset jar file must exist in the directory. (jfxgenproj-0.1.jar)
