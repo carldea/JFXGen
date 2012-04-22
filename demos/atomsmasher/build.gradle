@@ -103,7 +103,9 @@ task fxJnlp(dependsOn:'fxjar') << {
    //println('======')
    // add the host url on the href
    def jnlpXml = new XmlParser().parseText(newJnlp)
-   
+   if (System.properties['hostUrl']) {
+     jnlpXml.@href = "${System.properties['hostUrl']}/${jnlpXml.@href}"
+   }
    def xmlWriter = new StringWriter()
    def xmlNodePrinter = new XmlNodePrinter(new PrintWriter(xmlWriter))
    xmlNodePrinter.setPreserveWhitespace(true)
