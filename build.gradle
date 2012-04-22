@@ -13,24 +13,17 @@ subprojects {
 }
 
 task clean << {
+  delete('build')
   delete('dist')
 }
 
-task buildAll(dependsOn: ':demos:atomsmasher:fxjar') << {
+task buildAll(dependsOn: ':demos:atomsmasher:fxJnlp') << {
   file('dist').mkdirs()
   ext.jfxgenprojJar = project(':jfxgenproj').name 
   copy {
     into "dist"
-    from "jfxgenproj/build/libs"
-    include "${ext.jfxgenprojJar}*.jar"
+    from "build/libs"
   }
-  ext.atomSmasher = project(':demos:atomsmasher').name 
-  copy {
-    into "dist"
-    from "demos/atomsmasher/build/libs"
-    include "${ext.atomSmasher}*.jar"
-  }
-
 }
 defaultTasks 'clean', 'buildAll'
 
