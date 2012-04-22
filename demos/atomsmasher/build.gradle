@@ -151,4 +151,4 @@ task fxJnlpTest() << {
 }
 
 
-defaultTasks 'clean', 'fxjar'
+defaultTasks 'clean', 'fxJnlp'
