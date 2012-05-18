@@ -69,12 +69,12 @@ public class Ship extends Sprite {
     /**
      * Angle in degrees to rotate ship.
      */
-    public double degreesToMove = 0;
+
 
     /**
      * Current turning direction. default is NEITHER. Clockwise and Counter Clockwise.
      */
-    public DIRECTION turnDirection = DIRECTION.NEITHER;
+    private DIRECTION turnDirection = DIRECTION.NEITHER;
 
     /**
      * The current starting position of the vector or coordinate where the nose of the ship is pointing towards.
@@ -84,7 +84,7 @@ public class Ship extends Sprite {
     /**
      * All ImageViews of all the possible image frames for each direction the ship is pointing. ie: 32 directions.
      */
-    private List<RotatedShipImage> directionalShips = new ArrayList<>();
+    private final List<RotatedShipImage> directionalShips = new ArrayList<>();
 
     /**
      * The Timeline instance to animate the ship rotating using images. This is an optical illusion similar to page
@@ -107,8 +107,12 @@ public class Ship extends Sprite {
     /**
      * The spot where the user has right clicked letting the engine check the ship's center is in this area.
      */
-    private Circle stopArea = new Circle();
-    Group flipBook = new Group();
+    private final Circle stopArea = new Circle();
+
+    /**
+     * A group contain all of the ship image view nodes.
+     */
+    private final Group flipBook = new Group();
 
     public Ship() {
 
@@ -240,7 +244,7 @@ public class Ship extends Sprite {
             }
         }
 
-        degreesToMove = absAngleBetweenUAndV;
+        double degreesToMove = absAngleBetweenUAndV;
         if (goOtherWay) {
             degreesToMove = TWO_PI_DEGREES - absAngleBetweenUAndV;
         }
@@ -275,7 +279,7 @@ public class Ship extends Sprite {
         u = v;
     }
 
-    public void turnShip() {
+    private void turnShip() {
 
         final Duration oneFrameAmt = Duration.millis(MILLIS_PER_FRAME);
         RotatedShipImage startImage = directionalShips.get(uIndex);
@@ -301,7 +305,8 @@ public class Ship extends Sprite {
                             // make current ship image visible
                             displayNode.setVisible(true);
 
-                            uIndex = directionalShips.indexOf(displayNode);
+                            // update the current index
+                            //uIndex = directionalShips.indexOf(displayNode);
                         }
                     }); // oneFrame
 
@@ -340,8 +345,8 @@ public class Ship extends Sprite {
     /**
      * Stops the ship from thrusting forward.
      *
-     * @param screenX
-     * @param screenY
+     * @param screenX the screen's X coordinate to stop the ship.
+     * @param screenY the screen's Y coordinate to stop the ship.
      */
     public void applyTheBrakes(double screenX, double screenY) {
         stopArea.setCenterX(screenX);
