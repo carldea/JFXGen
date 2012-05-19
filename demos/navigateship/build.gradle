@@ -1,0 +1,128 @@
+apply plugin: 'java'
+apply plugin: 'application'
+apply plugin: 'idea'
+project.ext.group = 'carlfx'
+project.version = 0.1
+project.ext.jdkVersion = 1.7
+project.ext.antJavafxJar = 'build/classes/ant-javafx'
+project.ext.jfxgenProj = project(':jfxgenproj')
+project.ext.javafxHome = System.getenv('JAVAFX_HOME')
+
+sourceCompatibility = jdkVersion
+targetCompatibility = jdkVersion
+
+configurations {
+
+}
+
+repositories {
+    mavenCentral()
+    flatDir {
+        dirs "${project.ext.javafxHome}/tools/"
+    }
+
+}
+
+
+dependencies {
+    compile project(':jfxgenproj')
+    compile files("${project.ext.javafxHome}/rt/lib/jfxrt.jar")
+    testCompile 'junit:junit:4.10'
+}
+
+
+project.ext.mainClass = "carlfx.demos.navigateship.InputPart3"
+
+
+task fxjar(dependsOn: [':jfxgenproj:jar', 'classes']) << {
+    def fx = 'javafx:com.sun.javafx.tools.ant'
+    ant.sequential {
+        taskdef(resource: 'com/sun/javafx/tools/ant/antlib.xml',
+                uri: fx,
+                classpath: "${project.ext.javafxHome}/tools/ant-javafx.jar")
+
+        "$fx:application"(id: 'app-info',
+                name: project.name,
+                mainClass: project.ext.mainClass)
+
+        ext.requiredLibs = configurations.runtime.findAll { File file ->
+            (!file.name.equals('jfxrt.jar'))
+        }
+        copy {
+            into "build/libs"
+            from ext.requiredLibs
+        }
+
+        // So important that the resources fileset jar file must exist in the directory. (jfxgenproj-0.1.jar)
+        "$fx:jar"(destfile: "build/libs/${project.name}-${project.version}.jar") {
+            application(refid: 'app-info')
+            fileset(dir: 'build/resources/main')
+            fileset(dir: 'build/classes/main')
+            resources(id: 'images', description: 'runtime classpath') {
+                requiredLibs.each { File file ->
+                    fileset(dir: 'build/libs', includes: file.name)
+                }
+            }
+        }
+
+    }
+}
+
+task fxJnlp(dependsOn: 'fxjar') << {
+    def fx = 'javafx:com.sun.javafx.tools.ant'
+    ant.sequential {
+        taskdef(resource: 'com/sun/javafx/tools/ant/antlib.xml',
+                uri: fx, classpath: "${project.ext.javafxHome}/tools/ant-javafx.jar")
+
+        "$fx:application"(id: 'app-info', name: project.name, mainClass: project.ext.mainClass)
+
+        ext.applet_width = '300'
+        ext.applet_height = '300'
+        ext.application_title = 'InputPart3'
+        ext.application_vendor = 'CarlFX.wordpress.com'
+        ext.requiredLibs = configurations.runtime.findAll { File file -> (!file.name.equals('jfxrt.jar')) }
+        "$fx:deploy"(
+                width: "${ext.applet_width}",
+                height: "${ext.applet_height}",
+                outdir: "build/libs",
+                /*embedJNLP: "true",*/
+                outfile: "${ext.application_title}") {
+            application(refid: 'app-info', mainClass: project.ext.mainClass)
+            platform(javafx: '2.1+', j2se: '1.7+')
+            resources(id: 'xyz', description: 'all jars') {
+                ant.fileset(dir: "build/libs", includes: '*.jar')
+            }
+
+            info(title: "Navigate Ship",
+                    vendor: "${ext.application_vendor}")
+            //permissions(elevated: "true")
+        } // fx.ant.deploy
+
+    } // ant
+
+    // replace applet end tag with applet-desc
+    File jnlpFileOrig = new File("build/libs/${ext.application_title}.jnlp")
+    File jnlpFileTmp = new File("build/libs/${ext.application_title}.jnlp.tmp")
+    String oldJnlp = jnlpFileOrig.getText()
+    String newJnlp = oldJnlp.replaceAll("applet>", "applet-desc>")
+    //println(newJnlp)
+    //println('======')
+    // add the host url on the href
+    def jnlpXml = new XmlParser().parseText(newJnlp)
+    if (System.properties['hostUrl']) {
+        jnlpXml.@href = "${System.properties['hostUrl']}/${jnlpXml.@href}"
+    }
+    def xmlWriter = new StringWriter()
+    def xmlNodePrinter = new XmlNodePrinter(new PrintWriter(xmlWriter))
+    xmlNodePrinter.setPreserveWhitespace(true)
+    xmlNodePrinter.print(jnlpXml)
+    def xmlFinal = xmlWriter.toString()
+    //println(xmlFinal)
+    jnlpFileTmp << xmlFinal
+    jnlpFileOrig.delete()
+    jnlpFileTmp.renameTo(jnlpFileOrig)
+
+}
+
+
+defaultTasks 'clean', 'fxJnlp'
