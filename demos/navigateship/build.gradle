@@ -8,6 +8,14 @@ project.ext.antJavafxJar = 'build/classes/ant-javafx'
 project.ext.jfxgenProj = project(':jfxgenproj')
 project.ext.javafxHome = System.getenv('JAVAFX_HOME')
 
+// =========================================
+// Whenever you want to publish jars to your
+// server you can pass in the host url for
+// the jfx build to embed the url into the
+// jnlp file.
+// Example:
+// gradle -DhostUrl=http://mysite/here
+// =========================================
 sourceCompatibility = jdkVersion
 targetCompatibility = jdkVersion
 
@@ -93,8 +101,7 @@ task fxJnlp(dependsOn: 'fxjar') << {
                 ant.fileset(dir: "build/libs", includes: '*.jar')
             }
 
-            info(title: "Navigate Ship",
-                    vendor: "${ext.application_vendor}")
+            info(title: "Navigate Ship", vendor: "${ext.application_vendor}")
             //permissions(elevated: "true")
         } // fx.ant.deploy
 
