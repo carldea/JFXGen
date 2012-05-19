@@ -11,6 +11,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
@@ -151,6 +152,16 @@ public class TheExpanse extends GameWorld {
         // Initialize input
         primaryStage.getScene().setOnMousePressed(fireOrMove);
         //addEventHandler(MouseEvent.MOUSE_PRESSED, me);
+
+        // set up stats
+        EventHandler changeWeapons = new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent event) {
+                myShip.changeWeapon(event.getCode());
+            }
+        };
+        primaryStage.getScene().setOnKeyPressed(changeWeapons);
+
 
         // set up stats
         EventHandler showMouseMove = new EventHandler<MouseEvent>() {

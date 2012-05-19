@@ -10,6 +10,7 @@ import javafx.scene.CacheHint;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.image.Image;
+import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.util.Duration;
@@ -113,6 +114,11 @@ public class Ship extends Sprite {
      * A group contain all of the ship image view nodes.
      */
     private final Group flipBook = new Group();
+
+    /**
+     * A key code will be used for weapon selection.
+     */
+    private KeyCode keyCode;
 
     public Ship() {
 
@@ -354,10 +360,18 @@ public class Ship extends Sprite {
     }
 
     public Missile fire() {
-        Missile m1 = new Missile(Color.RED);
+        Missile m1;
+
+        float slowDownAmt = 0;
+        if (KeyCode.DIGIT2 == keyCode) {
+            m1 = new Missile(10, Color.BLUE);
+            slowDownAmt = 2.3f;
+        } else {
+            m1 = new Missile(Color.RED);
+        }
         // velocity vector of the missile
-        m1.vX = Math.cos(Math.toRadians(uIndex * UNIT_ANGLE_PER_FRAME)) * MISSILE_THRUST_AMOUNT;
-        m1.vY = -Math.sin(Math.toRadians(uIndex * UNIT_ANGLE_PER_FRAME)) * MISSILE_THRUST_AMOUNT;
+        m1.vX = Math.cos(Math.toRadians(uIndex * UNIT_ANGLE_PER_FRAME)) * (MISSILE_THRUST_AMOUNT - slowDownAmt);
+        m1.vY = -Math.sin(Math.toRadians(uIndex * UNIT_ANGLE_PER_FRAME)) * (MISSILE_THRUST_AMOUNT - slowDownAmt);
 
         // make the missile launch in the direction of the current direction of the ship nose. based on the
         // current frame (uIndex) into the list of image view nodes.
@@ -373,5 +387,8 @@ public class Ship extends Sprite {
         return m1;
     }
 
+    public void changeWeapon(KeyCode keyCode) {
+        this.keyCode = keyCode;
+    }
 
 }
