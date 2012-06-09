@@ -11,6 +11,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
@@ -157,7 +158,12 @@ public class TheExpanse extends GameWorld {
         EventHandler changeWeapons = new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent event) {
+                if (KeyCode.SPACE == event.getCode()) {
+                    myShip.shieldUp();
+                    return;
+                }
                 myShip.changeWeapon(event.getCode());
+
             }
         };
         primaryStage.getScene().setOnKeyPressed(changeWeapons);
@@ -304,13 +310,12 @@ public class TheExpanse extends GameWorld {
     protected boolean handleCollision(Sprite spriteA, Sprite spriteB) {
         if (spriteA != spriteB) {
             if (spriteA.collide(spriteB)) {
-                if (spriteA instanceof Atom && spriteB instanceof Atom) {
 
-                    ((Atom) spriteA).implode(this); // will remove from the Scene onFinish()
-                    ((Atom) spriteB).implode(this);
-                    getSpriteManager().addSpritesToBeRemoved(spriteA, spriteB);
-
-                    return true;
+                if (spriteA != myShip) {
+                    spriteA.handleDeath(this);
+                }
+                if (spriteB != myShip) {
+                    spriteB.handleDeath(this);
                 }
             }
         }
