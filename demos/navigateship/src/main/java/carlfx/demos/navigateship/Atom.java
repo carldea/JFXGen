@@ -5,7 +5,6 @@ import carlfx.gameengine.Sprite;
 import javafx.animation.FadeTransitionBuilder;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.geometry.Point2D;
 import javafx.scene.CacheHint;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.RadialGradient;
@@ -19,7 +18,7 @@ import javafx.util.Duration;
  * A spherical looking object (Atom) with a random radius, color, and velocity.
  * When two atoms collide each will fade and become removed from the scene. The
  * method called implode() implements a fade transition effect.
- * 
+ *
  * @author cdea
  */
 public class Atom extends Sprite {
@@ -29,8 +28,8 @@ public class Atom extends Sprite {
      * Constructor will create a optionally create a gradient fill
      * circle shape. This sprite will contain a JavaFX Circle node.
      *
-     * @param radius The radius of the circular shape.
-     * @param fill Fill color inside circle.
+     * @param radius       The radius of the circular shape.
+     * @param fill         Fill color inside circle.
      * @param gradientFill boolean to fill shape as gradient.
      */
     public Atom(double radius, Color fill, boolean gradientFill) {
@@ -55,9 +54,10 @@ public class Atom extends Sprite {
         }
         // set javafx node to a circle
         node = sphere;
+        collisionBounds = sphere;
 
     }
-    
+
     /**
      * Change the velocity of the atom particle.
      */
@@ -66,69 +66,42 @@ public class Atom extends Sprite {
         node.setTranslateX(node.getTranslateX() + vX);
         node.setTranslateY(node.getTranslateY() + vY);
     }
-    
-    @Override
-    public boolean collide(Sprite other) {
-       return other instanceof Atom && collide((Atom) other);
-    }
-    
-    /**
-     * When encountering another Atom to determine if they collided.
-     * This uses the distance formula from their center and radius.
-     * @param other Another atom
-     * @return boolean true if this atom and other atom has collided, 
-     * otherwise false.
-     */
-    private boolean collide(Atom other) {
-        
-        // if an object is hidden they didn't collide.
-        if (!node.isVisible() || 
-            !other.node.isVisible() || 
-            this == other) {
-            return false;
-        }
-        
-        // determine it's size
-        Circle otherSphere = other.getAsCircle();
-        Circle thisSphere =  getAsCircle();
-        Point2D otherCenter = otherSphere.localToScene(otherSphere.getCenterX(), otherSphere.getCenterY());
-        Point2D thisCenter = thisSphere.localToScene(thisSphere.getCenterX(), thisSphere.getCenterY());
-        double dx = otherCenter.getX() - thisCenter.getX();
-        double dy = otherCenter.getY() - thisCenter.getY();
-        double distance = Math.sqrt( dx * dx + dy * dy );
-        double minDist  = otherSphere.getRadius() + thisSphere.getRadius();
-
-        return (distance < minDist);
-    }
 
     /**
-     * Returns a node casted as a JavaFX Circle shape. 
+     * Returns a node casted as a JavaFX Circle shape.
+     *
      * @return Circle shape representing JavaFX node for convenience.
      */
     public Circle getAsCircle() {
         return (Circle) node;
     }
-    
+
     /**
      * Animate an implosion. Once done remove from the game world
+     *
      * @param gameWorld - game world
      */
     public void implode(final GameWorld gameWorld) {
         vX = vY = 0;
         FadeTransitionBuilder.create()
-            .node(node)
-            .duration(Duration.millis(300))
-            .fromValue(node.getOpacity())
-            .toValue(0)
-            .onFinished(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent arg0) {
-                    isDead = true;
-                    gameWorld.getSceneNodes().getChildren().remove(node);
+                .node(node)
+                .duration(Duration.millis(300))
+                .fromValue(node.getOpacity())
+                .toValue(0)
+                .onFinished(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent arg0) {
+                        isDead = true;
+                        gameWorld.getSceneNodes().getChildren().remove(node);
 
-                }
-            })
-            .build()
-            .play();
+                    }
+                })
+                .build()
+                .play();
+    }
+
+    public void handleDeath(GameWorld gameWorld) {
+        implode(gameWorld);
+        super.handleDeath(gameWorld);
     }
 }
