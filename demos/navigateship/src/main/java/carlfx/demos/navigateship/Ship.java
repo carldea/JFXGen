@@ -1,9 +1,7 @@
 package carlfx.demos.navigateship;
 
 import carlfx.gameengine.Sprite;
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
-import javafx.animation.TimelineBuilder;
+import javafx.animation.*;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.CacheHint;
@@ -13,6 +11,7 @@ import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.scene.shape.CircleBuilder;
 import javafx.util.Duration;
 
 import java.util.ArrayList;
@@ -62,7 +61,7 @@ public class Ship extends Sprite {
     /**
      * Velocity amount used vector when ship moves forward. scale vector of ship. See flipBook translateX and Y.
      */
-    private final static float THRUST_AMOUNT = 3.3f;
+    private final static float THRUST_AMOUNT = 4.3f;
 
     /***/
     private final static float MISSILE_THRUST_AMOUNT = 6.3F;
@@ -120,11 +119,27 @@ public class Ship extends Sprite {
      */
     private KeyCode keyCode;
 
+    /**
+     * Turn shields on
+     */
+    private boolean shieldOn;
+
+    /**
+     * Green shield to be used as collision bounds.
+     */
+    private Circle shield;
+
+    /**
+     * A fade effect while the shields are up momentarily
+     */
+    FadeTransition shieldFade;
+
     public Ship() {
 
         // Load one image.
         Image shipImage = new Image(getClass().getClassLoader().getResource("ship.png").toExternalForm(), true);
         stopArea.setRadius(40);
+        stopArea.setStroke(Color.ORANGE);
         RotatedShipImage prev = null;
 
         // create all the number of directions based on a unit angle. 360 divided by NUM_DIRECTIONS
@@ -135,6 +150,7 @@ public class Ship extends Sprite {
             imageView.setCache(true);
             imageView.setCacheHint(CacheHint.SPEED);
             imageView.setManaged(false);
+
             imageView.prev = prev;
             imageView.setVisible(false);
             directionalShips.add(imageView);
@@ -144,6 +160,7 @@ public class Ship extends Sprite {
             prev = imageView;
             flipBook.getChildren().add(imageView);
         }
+
         RotatedShipImage firstShip = directionalShips.get(0);
         firstShip.prev = prev;
         prev.next = firstShip;
@@ -152,6 +169,11 @@ public class Ship extends Sprite {
         node = flipBook;
         flipBook.setTranslateX(200);
         flipBook.setTranslateY(300);
+        flipBook.setCache(true);
+        flipBook.setCacheHint(CacheHint.SPEED);
+        flipBook.setManaged(false);
+        flipBook.setAutoSizeChildren(false);
+
 
     }
 
@@ -365,7 +387,7 @@ public class Ship extends Sprite {
         float slowDownAmt = 0;
         if (KeyCode.DIGIT2 == keyCode) {
             m1 = new Missile(10, Color.BLUE);
-            slowDownAmt = 2.3f;
+            slowDownAmt = 1.3f;
         } else {
             m1 = new Missile(Color.RED);
         }
@@ -389,6 +411,59 @@ public class Ship extends Sprite {
 
     public void changeWeapon(KeyCode keyCode) {
         this.keyCode = keyCode;
+    }
+
+    public void shieldUp() {
+
+
+        if (shield == null) {
+            RotatedShipImage shipImage = getCurrentShipImage();
+            double x = shipImage.getBoundsInLocal().getWidth() / 2;
+            double y = shipImage.getBoundsInLocal().getHeight() / 2;
+
+            // add shield
+            shield = CircleBuilder.create()
+                    .radius(60)
+                    .strokeWidth(5)
+                    .stroke(Color.LIMEGREEN)
+                    .centerX(x)
+                    .centerY(y)
+                    .opacity(.70)
+                    .build();
+            collisionBounds = shield;
+            shieldFade = FadeTransitionBuilder.create()
+                    .fromValue(1)
+                    .toValue(.40)
+                    .duration(Duration.millis(1000))
+                    .cycleCount(12)
+                    .autoReverse(true)
+                    .node(shield)
+                    .onFinished(new EventHandler<ActionEvent>() {
+                        @Override
+                        public void handle(ActionEvent actionEvent) {
+                            shieldOn = false;
+                            flipBook.getChildren().remove(shield);
+                            shieldFade.stop();
+                            collisionBounds = null;
+                        }
+                    })
+                    .build();
+            shieldFade.playFromStart();
+
+        }
+        shieldOn = !shieldOn;
+        if (shieldOn) {
+            collisionBounds = shield;
+            flipBook.getChildren().add(0, shield);
+            shieldFade.playFromStart();
+        } else {
+            flipBook.getChildren().remove(shield);
+            shieldFade.stop();
+            collisionBounds = null;
+
+        }
+
+
     }
 
 }
