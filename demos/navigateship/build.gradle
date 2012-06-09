@@ -2,7 +2,7 @@ apply plugin: 'java'
 apply plugin: 'application'
 apply plugin: 'idea'
 project.ext.group = 'carlfx'
-project.version = 0.1
+project.version = 0.2
 project.ext.jdkVersion = 1.7
 project.ext.antJavafxJar = 'build/classes/ant-javafx'
 project.ext.jfxgenProj = project(':jfxgenproj')
@@ -39,7 +39,7 @@ dependencies {
 }
 
 
-project.ext.mainClass = "carlfx.demos.navigateship.InputPart3"
+project.ext.mainClass = "carlfx.demos.navigateship.Part3_4_5"
 
 
 task fxjar(dependsOn: [':jfxgenproj:jar', 'classes']) << {
@@ -86,7 +86,7 @@ task fxJnlp(dependsOn: 'fxjar') << {
 
         ext.applet_width = '300'
         ext.applet_height = '300'
-        ext.application_title = 'InputPart3'
+        ext.application_title = 'CollisionPart4'
         ext.application_vendor = 'CarlFX.wordpress.com'
         ext.requiredLibs = configurations.runtime.findAll { File file -> (!file.name.equals('jfxrt.jar')) }
         "$fx:deploy"(
@@ -101,7 +101,7 @@ task fxJnlp(dependsOn: 'fxjar') << {
                 ant.fileset(dir: "build/libs", includes: '*.jar')
             }
 
-            info(title: "Navigate Ship", vendor: "${ext.application_vendor}")
+            info(title: "Collision Detection", vendor: "${ext.application_vendor}")
             //permissions(elevated: "true")
         } // fx.ant.deploy
 
