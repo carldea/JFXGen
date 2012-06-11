@@ -79,7 +79,7 @@ public class TheExpanse extends GameWorld {
         // Create a button to freeze the game loop.
         //final Timeline gameLoop = getGameLoop();
         getSpriteManager().addSprites(myShip);
-        getSceneNodes().getChildren().add(myShip.node);
+        getSceneNodes().getChildren().add(0, myShip.node);
 
         // mouse point
         VBox stats = new VBox();
@@ -159,7 +159,7 @@ public class TheExpanse extends GameWorld {
             @Override
             public void handle(KeyEvent event) {
                 if (KeyCode.SPACE == event.getCode()) {
-                    myShip.shieldUp();
+                    myShip.shieldToggle();
                     return;
                 }
                 myShip.changeWeapon(event.getCode());
@@ -223,7 +223,7 @@ public class TheExpanse extends GameWorld {
             getSpriteManager().addSprites(b);
 
             // add sprite's 
-            getSceneNodes().getChildren().add(0, b.node);
+            getSceneNodes().getChildren().add(b.node);
 
         }
     }
