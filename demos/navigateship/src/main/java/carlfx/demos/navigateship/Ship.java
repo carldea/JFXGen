@@ -134,6 +134,11 @@ public class Ship extends Sprite {
      */
     FadeTransition shieldFade;
 
+    /**
+     * The collision bounding region for the ship
+     */
+    private Circle hitBounds;
+
     public Ship() {
 
         // Load one image.
@@ -141,7 +146,6 @@ public class Ship extends Sprite {
         stopArea.setRadius(40);
         stopArea.setStroke(Color.ORANGE);
         RotatedShipImage prev = null;
-
         // create all the number of directions based on a unit angle. 360 divided by NUM_DIRECTIONS
         for (int i = 0; i < NUM_DIRECTIONS; i++) {
             RotatedShipImage imageView = new RotatedShipImage();
@@ -173,7 +177,31 @@ public class Ship extends Sprite {
         flipBook.setCacheHint(CacheHint.SPEED);
         flipBook.setManaged(false);
         flipBook.setAutoSizeChildren(false);
+        initHitZone();
 
+    }
+
+    /**
+     * Initialize the collision region for the space ship.
+     * It's just a inscribed circle.
+     */
+    public void initHitZone() {
+        // build hit zone
+        if (hitBounds == null) {
+            RotatedShipImage firstShip = directionalShips.get(0);
+            double hZoneCenterX = 55;
+            double hZoneCenterY = 34;
+            hitBounds = CircleBuilder.create()
+                    .centerX(hZoneCenterX)
+                    .centerY(hZoneCenterY)
+                    .stroke(Color.PINK)
+                    .fill(Color.RED)
+                    .radius(15)
+                    .opacity(0)
+                    .build();
+            flipBook.getChildren().add(hitBounds);
+            collisionBounds = hitBounds;
+        }
 
     }
 
@@ -403,9 +431,9 @@ public class Ship extends Sprite {
         double offsetX = (shipImage.getBoundsInLocal().getWidth() - m1.node.getBoundsInLocal().getWidth()) / 2;
         double offsetY = (shipImage.getBoundsInLocal().getHeight() - m1.node.getBoundsInLocal().getHeight()) / 2;
 
-        // initial launch of the missile
-        m1.node.setTranslateX(node.getTranslateX() + offsetX + m1.vX);
-        m1.node.setTranslateY(node.getTranslateY() + offsetY + m1.vY);
+        // initial launch of the missile   (multiply vector by 4 makes it appear at the nose of the ship)
+        m1.node.setTranslateX(node.getTranslateX() + (offsetX + (m1.vX * 4)));
+        m1.node.setTranslateY(node.getTranslateY() + (offsetY + (m1.vY * 4)));
         return m1;
     }
 
@@ -413,7 +441,7 @@ public class Ship extends Sprite {
         this.keyCode = keyCode;
     }
 
-    public void shieldUp() {
+    public void shieldToggle() {
 
 
         if (shield == null) {
@@ -444,7 +472,7 @@ public class Ship extends Sprite {
                             shieldOn = false;
                             flipBook.getChildren().remove(shield);
                             shieldFade.stop();
-                            collisionBounds = null;
+                            collisionBounds = hitBounds;
                         }
                     })
                     .build();
@@ -459,7 +487,7 @@ public class Ship extends Sprite {
         } else {
             flipBook.getChildren().remove(shield);
             shieldFade.stop();
-            collisionBounds = null;
+            collisionBounds = hitBounds;
 
         }
 
