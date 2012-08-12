@@ -39,7 +39,7 @@ public class SoundManager {
     }
 
     /**
-     * Lookup a media player to play sound based on the id.
+     * Lookup a name resource to play sound based on the id.
      *
      * @param id identifier for a sound to be played.
      */
