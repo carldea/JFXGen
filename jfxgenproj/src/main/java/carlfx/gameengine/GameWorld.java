@@ -55,6 +55,8 @@ public abstract class GameWorld {
      */
     private final SpriteManager spriteManager = new SpriteManager();
 
+    private final SoundManager soundManager = new SoundManager(3);
+
     /**
      * Constructor that is called by the derived class. This will
      * set the frames per second, title, and setup the game loop.
@@ -270,4 +272,15 @@ public abstract class GameWorld {
         this.sceneNodes = sceneNodes;
     }
 
+    protected SoundManager getSoundManager() {
+        return soundManager;
+    }
+
+    /**
+     * Stop threads and stop media from playing.
+     */
+    public void shutdown() {
+        getGameLoop().stop();
+        getSoundManager().shutdown();
+    }
 }
