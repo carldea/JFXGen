@@ -142,7 +142,8 @@ public class Ship extends Sprite {
     public Ship() {
 
         // Load one image.
-        Image shipImage = new Image(getClass().getClassLoader().getResource("ship.png").toExternalForm(), true);
+        Image shipImage;
+        shipImage = new Image(getClass().getClassLoader().getResource("ship.png").toExternalForm(), true);
         stopArea.setRadius(40);
         stopArea.setStroke(Color.ORANGE);
         RotatedShipImage prev = null;
@@ -188,7 +189,7 @@ public class Ship extends Sprite {
     public void initHitZone() {
         // build hit zone
         if (hitBounds == null) {
-            RotatedShipImage firstShip = directionalShips.get(0);
+            //RotatedShipImage firstShip = directionalShips.get(0);
             double hZoneCenterX = 55;
             double hZoneCenterY = 34;
             hitBounds = CircleBuilder.create()
@@ -413,11 +414,14 @@ public class Ship extends Sprite {
         Missile m1;
 
         float slowDownAmt = 0;
+        int scaleBeginningMissle;
         if (KeyCode.DIGIT2 == keyCode) {
-            m1 = new Missile(10, Color.BLUE);
+            m1 = new Missile(9, Color.BLUE);
             slowDownAmt = 1.3f;
+            scaleBeginningMissle = 11;
         } else {
             m1 = new Missile(Color.RED);
+            scaleBeginningMissle = 8;
         }
         // velocity vector of the missile
         m1.vX = Math.cos(Math.toRadians(uIndex * UNIT_ANGLE_PER_FRAME)) * (MISSILE_THRUST_AMOUNT - slowDownAmt);
@@ -432,8 +436,8 @@ public class Ship extends Sprite {
         double offsetY = (shipImage.getBoundsInLocal().getHeight() - m1.node.getBoundsInLocal().getHeight()) / 2;
 
         // initial launch of the missile   (multiply vector by 4 makes it appear at the nose of the ship)
-        m1.node.setTranslateX(node.getTranslateX() + (offsetX + (m1.vX * 4)));
-        m1.node.setTranslateY(node.getTranslateY() + (offsetY + (m1.vY * 4)));
+        m1.node.setTranslateX(node.getTranslateX() + (offsetX + (m1.vX * scaleBeginningMissle)));
+        m1.node.setTranslateY(node.getTranslateY() + (offsetY + (m1.vY * scaleBeginningMissle)));
         return m1;
     }
 
