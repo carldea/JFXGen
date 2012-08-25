@@ -46,7 +46,6 @@ public class TheExpanse extends GameWorld {
 
     Ship myShip = new Ship();
 
-
     public TheExpanse(int fps, String title) {
         super(fps, title);
     }
@@ -109,6 +108,9 @@ public class TheExpanse extends GameWorld {
             }
         });
 
+        // load sound file
+        getSoundManager().loadSound("laser", getClass().getClassLoader().getResource("laser_2.mp3"));
+
         // ===================================================
         // Debugging purposes
         // uncomment to test mouse press and rotation angles.
@@ -133,7 +135,13 @@ public class TheExpanse extends GameWorld {
                     // fire
                     Missile m1 = myShip.fire();
                     getSpriteManager().addSprites(m1);
+
                     getSceneNodes().getChildren().add(0, m1.node);
+
+                    // play sound
+                    getSoundManager().playSound("laser");
+
+
                 } else if (event.getButton() == MouseButton.SECONDARY) {
                     // determine when all atoms are not on the game surface. Ship should be one sprite left.
                     if (getSpriteManager().getAllSprites().size() <= 1) {
