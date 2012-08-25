@@ -109,7 +109,7 @@ public class TheExpanse extends GameWorld {
         });
 
         // load sound file
-        getSoundManager().loadSound("laser", getClass().getClassLoader().getResource("laser_2.mp3"));
+        getSoundManager().loadSoundEffects("laser", getClass().getClassLoader().getResource("laser_2.mp3"));
 
         // ===================================================
         // Debugging purposes
@@ -136,10 +136,10 @@ public class TheExpanse extends GameWorld {
                     Missile m1 = myShip.fire();
                     getSpriteManager().addSprites(m1);
 
-                    getSceneNodes().getChildren().add(0, m1.node);
-
                     // play sound
                     getSoundManager().playSound("laser");
+
+                    getSceneNodes().getChildren().add(0, m1.node);
 
 
                 } else if (event.getButton() == MouseButton.SECONDARY) {
