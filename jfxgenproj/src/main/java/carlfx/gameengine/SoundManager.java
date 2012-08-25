@@ -1,7 +1,6 @@
 package carlfx.gameengine;
 
-import javafx.scene.media.Media;
-import javafx.scene.media.MediaPlayer;
+import javafx.scene.media.AudioClip;
 
 import java.net.URL;
 import java.util.HashMap;
@@ -17,7 +16,7 @@ import java.util.concurrent.Executors;
  */
 public class SoundManager {
     ExecutorService soundPool = Executors.newFixedThreadPool(2);
-    Map<String, String> soundMap = new HashMap<>();
+    Map<String, AudioClip> soundEffectsMap = new HashMap<>();
 
     /**
      * Constructor to create a simple thread pool.
@@ -34,8 +33,9 @@ public class SoundManager {
      * @param id  - The identifier for a sound.
      * @param url - The url location of the media or audio resource. Usually in src/main/resources directory.
      */
-    public void loadSound(String id, URL url) {
-        soundMap.put(id, url.toExternalForm());
+    public void loadSoundEffects(String id, URL url) {
+        AudioClip sound = new AudioClip(url.toExternalForm());
+        soundEffectsMap.put(id, sound);
     }
 
     /**
@@ -47,14 +47,7 @@ public class SoundManager {
         Runnable soundPlay = new Runnable() {
             @Override
             public void run() {
-                Media sound = new Media(soundMap.get(id));
-                final MediaPlayer mediaPlayer = new MediaPlayer(sound);
-                mediaPlayer.setOnReady(new Runnable() {
-                    @Override
-                    public void run() {
-                        mediaPlayer.play();
-                    }
-                });
+                soundEffectsMap.get(id).play();
             }
         };
         soundPool.execute(soundPlay);
