@@ -2,6 +2,7 @@ package carlfx.demos.navigateship;
 
 import carlfx.gameengine.GameWorld;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.stage.Stage;
 
 /**
@@ -11,7 +12,7 @@ import javafx.stage.Stage;
  */
 public class Part3_4_5 extends Application {
 
-    GameWorld gameWorld = new TheExpanse(59, "JavaFX 2 GameTutorial Part 4 Collision");
+    GameWorld gameWorld = new TheExpanse(59, "JavaFX 2 GameTutorial Part 3, 4, and 5");
 
     /**
      * @param args the command line arguments
@@ -30,6 +31,12 @@ public class Part3_4_5 extends Application {
 
         // display window
         primaryStage.show();
+    }
+
+    @Override
+    public void stop() throws Exception {
+        Platform.exit();
+        gameWorld.shutdown();
     }
 
 }
