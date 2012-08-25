@@ -6,7 +6,7 @@ project.ext.jdkVersion = 1.7
 project.ext.javafxHome = System.getenv('JAVAFX_HOME')
 
 group = 'carlfx'
-version = 0.2
+version = 0.3
 
 sourceCompatibility = jdkVersion
 targetCompatibility = jdkVersion
