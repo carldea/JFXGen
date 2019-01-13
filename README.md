@@ -15,7 +15,7 @@ Software Requirements:
 
 When setting your environment make sure you have 'JAVA_HOME', 'JAVAFX_HOME', and 'GRADLE_HOME'. Please refer to install instructions for your platform (iOS, unix, linux, Windows).
 
-Building the game engine and the demos as Java Webstart applictions.
+Building the game engine and the demos as Java Webstart applications.
 --------------------------------------------------------------------
 mkdir JFXGen
 cd JFXGen
